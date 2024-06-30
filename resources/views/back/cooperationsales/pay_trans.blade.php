@@ -1,0 +1,306 @@
+@extends('back.layouts.master')
+
+@section('content')
+    <div class="app-content content">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper">
+            <div class="content-header row">
+                <div class="content-header-left col-md-9 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            <div class="breadcrumb-wrapper col-12">
+                                <ol class="breadcrumb no-border">
+                                    <li class="breadcrumb-item">مدیریت
+                                    </li>
+                                    <li class="breadcrumb-item">همکاران
+                                    </li>
+                                    <li class="breadcrumb-item active">تراکنش های درخواست واریز
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="content-body">
+                <section class="card">
+                    <div class="card-header">
+
+                        <h4 class="card-title">لیست تراکنش های فروشگاه: {{ $store->nameofstore }}</h4>
+
+                    </div>
+
+                    <div class="card-content">
+                        <div class="container mt-3">
+
+
+                            <!-- Tab panes -->
+                            <div class="">
+                                <div id="home" class="container tab-pane "><br>
+
+
+
+                                    <div class="row mt-1 ml-2 mb-2">
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="g-col-6 g-col-sm-12">
+                                            <h4>
+                                                مجموعه تراکنش ها
+                                            </h4>
+                                        </div>
+                                        <div class="g-col-6 d-col-sm-12 d-flex align-items-center">
+                                            <input id="total_transaction" readonly class="form-control mr-1 moneyInput" type="text"
+                                                value="{{ $total }}">
+                                            ریال
+                                        </div>
+                                    </div>
+                                    @if (!$trans->count() > 0)
+                                        <div class="alert alert-warning m-2 p-2">
+                                            <h5 class="text-danger">
+                                                تراکنشی برای نمایش وجود ندارد!
+                                            </h5>
+                                        </div>
+                                    @else
+                                        <div class="pc-size" data-screen="pc">
+
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            #
+                                                        </th>
+                                                        <th>
+                                                            تاریخ تراکنش
+                                                        </th>
+                                                        <th>
+                                                            نوع تراکنش
+                                                        </th>
+                                                        <th>
+                                                            مبلغ فاکتور
+                                                        </th>
+                                                        <th>
+                                                            موجودی
+                                                        </th>
+                                                        <th class="">
+                                                            شماره شبا
+                                                        </th>
+                                                        <th>
+                                                            شماره سند
+                                                        </th>
+                                                        <th>
+                                                            وضعیت
+                                                        </th>
+                                                        <th>
+                                                            جزئیات
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                @php
+                                                    $counter = ($trans->currentPage() - 1) * $trans->perPage() + 1;
+                                                @endphp
+                                                <tbody>
+                                                    @foreach ($trans as $key)
+                                                        <tr>
+                                                            <td>
+                                                                {{ $counter++ }}
+                                                            </td>
+                                                            <td>
+                                                                <span class="transaction_datetime">
+                                                                    {{ \Carbon\Carbon::parse($key->depositdate)->format('Y-m-d') }}
+                                                                    <br>
+                                                                    {{ \Carbon\Carbon::parse($key->created_at)->format('H:i:s') }}
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                {{ 'درخواست واریز' }}
+                                                            </td>
+                                                            <td>
+                                                                <span class="monyInputSpan">{{ $key->depositamount }}</span>
+                                                            </td>
+                                                            <td>
+                                                                <span class="monyInputSpan">{{ $key->final_price }}</span>
+                                                            </td>
+                                                            <td class="text-danger">
+                                                                <span class="">{{ $key->shabanumber }}</span>
+
+                                                            </td>
+                                                            <td>
+                                                                {{ $key->list_id }}
+                                                            </td>
+                                                            <td>
+                                                                {!! $key->status == 1
+                                                                    ? '<span class="badge badge-success">پرداخت شده</span>'
+                                                                    : '<span class="badge badge-warning">انتظار پرداخت</span>' !!}
+                                                            </td>
+                                                            <td>
+                                                                <button
+                                                                    data-action="{{ route('admin.cooperationsales.transaction.details', [$key->trans_id]) }}"
+                                                                    class="btn transaction_details btn btn-info btn-sm"
+                                                                    data-id="{{ $key->trans_id }}" value=""><i
+                                                                        class="feather icon-info"> بیشتر</i>
+                                                                </button>
+                                                            </td>
+
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="mobile-size " data-screen="mobile">
+                                            @foreach ($trans as $key)
+                                                <div class=" border rounded mb-1">
+                                                    <div class="row pt-1">
+                                                        <div class="col ml-1">
+                                                            <h5 class="text-light">
+                                                                تاریخ تراکنش:
+
+                                                            </h5>
+                                                        </div>
+                                                        <div class="col"><span class="text-dark">
+                                                                {{ \Carbon\Carbon::parse($key->depositdate)->format('Y-m-d') }}
+                                                                {{ \Carbon\Carbon::parse($key->created_at)->format('H:i:s') }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row pt-1">
+                                                        <div class="col ml-1">
+                                                            <h5 class="text-light">نوع تراکنش:
+                                                            </h5>
+                                                        </div>
+                                                        <div class="col">
+                                                            <span class="text-dark">
+                                                                {{ 'درخواست واریز' }}
+
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row pt-1">
+                                                        <div class="col ml-1">
+                                                            <h5 class="text-light">مبلغ فاکتور:
+
+                                                            </h5>
+                                                        </div>
+                                                        <div class="col">
+
+                                                            <span class="monyInputSpan">{{ $key->depositamount }}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row pt-1">
+                                                        <div class="col ml-1">
+
+                                                            <h5 class="text-light">شماره شبا:
+                                                            </h5>
+                                                        </div>
+                                                        <div class="col">
+
+                                                            <span class="">{{ $key->shabanumber }}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row pt-1">
+                                                        <div class="col ml-1">
+
+                                                            <h5 class="text-light"> شماره سند:
+                                                            </h5>
+                                                        </div>
+
+                                                        <div class="col">
+                                                            <span class="text-dark">
+                                                                {{ $key->list_id }} </span>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="row pt-1">
+                                                        <div class="col ml-1">
+
+                                                            <h5 class="text-light">وضعیت:
+                                                            </h5>
+                                                        </div>
+
+                                                        <div class="col">
+
+                                                            {!! $key->status == 1
+                                                                ? '<span class="badge badge-success">پرداخت شده</span>'
+                                                                : '<span class="badge badge-warning">انتظار پرداخت</span>' !!}
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="row p-1">
+                                                        <div class="col ml-1">
+
+                                                            <h5 class="text-light">جزئیات:
+                                                            </h5>
+                                                        </div>
+
+                                                        <div class="col">
+                                                            <button
+                                                                data-action="{{ route('admin.cooperationsales.transaction.details', [$key->trans_id]) }}"
+                                                                class="btn transaction_details btn btn-info btn-sm"
+                                                                data-id="{{ $key->trans_id }}" value=""><i
+                                                                    class="feather icon-info"> بیشتر</i>
+                                                            </button>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="m-3">
+                        {{ $trans->links() }}
+                    </div>
+            </div>
+
+        </div>
+
+        </section>
+    </div>
+
+    </div>
+    </div>
+    <div class="modal fade transaction_details_modal" id="transaction_details">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">جزئیات تراکنش:<span class="text-success" id="deposit_amount_show"></span>
+                    </h4>
+                </div>
+                <hr />
+
+                <!-- Modal body -->
+                <div class="modal-body p-2">
+
+
+                </div>
+
+                <!-- Modal footer -->
+
+                <div class="modal-footer">
+
+                </div>
+                <button type="button" class="btn btn-danger m-1 d-flex justify-content-center" data-dismiss="modal"><i
+                        class="feather icon-x-circle" style=""></i> بستن</button>
+
+            </div>
+        </div>
+    @endsection
+
+    @include('back.partials.plugins', [
+        'plugins' => ['persian-datepicker', 'jquery.validate'],
+    ])
+
+
+    @push('scripts')
+        <script src="{{ asset('back/assets/js/pages/banktransaction/script.js') }}"></script>
+
+        <script src="{{ asset('back/assets/js/pages/installmentsReport/create.js') }}?v=51"></script>
+    @endpush
